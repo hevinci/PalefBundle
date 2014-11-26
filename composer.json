@@ -1,0 +1,12 @@
+{
+    "name": "hevinci/palef-bundle",
+    "type": "claroline-plugin",
+    "require": {
+        "php": ">=5.4.1",
+        "claroline/core-bundle": "~3.0"
+    },
+    "autoload": {
+        "psr-0": { "HeVinci\\PalefBundle": "" }
+    },
+    "target-dir": "HeVinci/PalefBundle"
+}
