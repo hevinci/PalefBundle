@@ -2,13 +2,15 @@
 
 namespace HeVinci\PalefBundle\Command;
 
+use Doctrine\ORM\EntityManagerInterface;
+use HeVinci\PalefBundle\Entity\Competency;
 use HeVinci\PalefBundle\SpreadsheetParser;
-use Symfony\Component\Console\Command\Command;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ImportCommand extends Command
+class ImportCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
@@ -17,7 +19,7 @@ class ImportCommand extends Command
         $this->setDefinition(
             array(
                 new InputArgument('spreadsheet', InputArgument::REQUIRED, 'The spreadsheet path'),
-                new InputArgument('output', InputArgument::REQUIRED, 'The output file path')
+                new InputArgument('name', InputArgument::REQUIRED, 'The name of the competency framework')
             )
         );
     }
@@ -26,9 +28,30 @@ class ImportCommand extends Command
     {
         $parser = new SpreadsheetParser();
         $competencies = $parser->parse($input->getArgument('spreadsheet'));
-        $output = array_reduce($competencies, function ($a, $b) {
-           return $a . $b;
-        });
-        file_put_contents($input->getArgument('output'), $output);
+        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
+        $root = new Competency();
+        $root->setDescription($input->getArgument('name'));
+
+        foreach ($competencies as $competency) {
+            $competency->setParent($root);
+            $this->recursivePersist($competency, $em);
+        }
+
+        $em->persist($root);
+        $em->flush();
+    }
+
+    private function recursivePersist(Competency $competency, EntityManagerInterface $em)
+    {
+        foreach ($competency->getChildren() as $child) {
+            $em->persist($child);
+            $this->recursivePersist($child, $em);
+        }
+
+        foreach ($competency->getTasks() as $task) {
+            $em->persist($task);
+        }
+
+        $em->persist($competency);
     }
 }

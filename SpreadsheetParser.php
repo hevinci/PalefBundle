@@ -18,7 +18,7 @@ class SpreadsheetParser
         8 => 'declarative',
         9 => 'conceptual',
         10 => 'procedural',
-        11 => 'meta'
+        11 => 'metacognitive'
     ];
 
     public function parse($file)
@@ -82,19 +82,19 @@ class SpreadsheetParser
 
                             if ($cellContent) {
                                 if ($columnIndex === $this->competencyColumn) {
-                                    $currentCompetency = $this->buildCompetency($cellContent, 1);
+                                    $currentCompetency = $this->buildCompetency($cellContent);
                                     $competencies[] = $currentCompetency;
                                     continue;
                                 }
 
                                 if ($columnIndex === $this->abilityColumn) {
-                                    $currentAbility = $this->buildCompetency($cellContent, 2);
-                                    $currentCompetency->subCompetencies[] = $currentAbility;
+                                    $currentAbility = $this->buildCompetency($cellContent);
+                                    $currentAbility->setParent($currentCompetency);
                                 }
 
                                 if ($columnIndex === $this->strategyColumn) {
-                                    $currentStrategy = $this->buildCompetency($cellContent, 3);
-                                    $currentAbility->subCompetencies[] = $currentStrategy;
+                                    $currentStrategy = $this->buildCompetency($cellContent);
+                                    $currentStrategy->setParent($currentAbility);
                                 }
 
                                 if ($columnIndex === $this->processColumn) {
@@ -108,15 +108,15 @@ class SpreadsheetParser
                                 if (in_array($columnIndex, array_keys($this->taskColumns))) {
                                     if (!$currentStrategy) {
                                         $currentStrategy = $this->buildCompetency('(no description)', 3);
-                                        $currentAbility->subCompetencies[] = $currentStrategy;
+                                        $currentStrategy->setParent($currentAbility);
                                     }
 
                                     $task = new Task();
-                                    $task->description = $cellContent;
-                                    $task->process = $currentProcess;
-                                    $task->complexity = $currentComplexity;
-                                    $task->knowledge = $this->taskColumns[$columnIndex];
-                                    $currentStrategy->tasks[] = $task;
+                                    $task->setDescription($cellContent);
+                                    $task->setProcess($currentProcess);
+                                    $task->setComplexity($currentComplexity);
+                                    $task->setKnowledgeType($this->taskColumns[$columnIndex]);
+                                    $currentStrategy->addTask($task);
                                 }
                             }
                         }
@@ -128,11 +128,10 @@ class SpreadsheetParser
         return $competencies;
     }
 
-    private function buildCompetency($description, $level)
+    private function buildCompetency($description)
     {
         $competency = new Competency();
-        $competency->description = $description;
-        $competency->level = $level;
+        $competency->setDescription($description);
 
         return $competency;
     }
