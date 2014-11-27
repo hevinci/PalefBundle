@@ -28,13 +28,15 @@ class ExerciseGenerator
         $tasks = $this->em
             ->getRepository('HeVinci\PalefBundle\Entity\Task')
             ->findAll();
+        $exerciseIndex = 1;
 
         foreach ($tasks as $task) {
             for ($i = 1; $i < 11; ++$i) {
                 $exercise = new Exercise();
-                $exercise->setDescription('Exercise n°' . $i);
+                $exercise->setDescription('Exercise n°' . $exerciseIndex);
                 $this->em->persist($exercise);
                 $task->addExercise($exercise);
+                $exerciseIndex++;
 
                 if ((bool) rand(0, 1)) {
                     for ($j = 0, $max = rand(1, 3); $j < $max; ++$j) {
