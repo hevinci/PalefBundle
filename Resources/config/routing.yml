@@ -1,0 +1,4 @@
+hevinci_palef:
+    resource: "@HeVinciPalefBundle/Controller/BaseController.php"
+    type:     annotation
+    prefix:   /

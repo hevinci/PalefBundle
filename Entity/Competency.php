@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Gedmo\Tree\Entity\Repository\NestedTreeRepository")
  * @ORM\Table(name="hevinci_competency")
  * @Gedmo\Tree(type="nested")
  */
@@ -30,6 +30,10 @@ class Competency
     protected $parent;
 
     // not mapped (used for transfer from spreadsheet to text)
+    /**
+     * @ORM\OneToMany(targetEntity="HeVinci\PalefBundle\Entity\Competency", mappedBy="parent")
+     * @ORM\OrderBy({"lft" = "ASC"})
+     */
     private $children;
 
     /**

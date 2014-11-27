@@ -1,0 +1,39 @@
+{% for root in roots %}
+    <h3>{{ root.getDescription() }}</h3>
+    <ul>
+        {% for competency in root.getChildren() %}
+            <li>
+                {{ competency.getDescription() }}
+                <ul>
+                    {% for ability in competency.getChildren() %}
+                        <li>
+                            {{ ability.getDescription() }}
+                            <ul>
+                                {% for strategy in ability.getChildren() %}
+                                    <li>
+                                        {{ strategy.getDescription() }}
+                                        <ul>
+                                            {% for task in strategy.getTasks() %}
+                                                <li>
+                                                    {{ task.getDescription() }}
+                                                    <div>
+                                                        (
+                                                        {{ task.getProcess() }},
+                                                        {{ task.getComplexity() }},
+                                                        {{ task.getKnowledgeType() }},
+                                                        {{ task.getWeight() }}
+                                                        )
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+{% endfor %}
