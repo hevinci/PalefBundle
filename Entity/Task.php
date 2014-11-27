@@ -2,6 +2,7 @@
 
 namespace HeVinci\PalefBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -59,6 +60,20 @@ class Task
      * @ORM\Column(type="integer")
      */
     private $weight = 1;
+
+    /**
+     * @ORM\ManyToMany(
+     *     targetEntity="HeVinci\PalefBundle\Entity\Exercise",
+     *     inversedBy="tasks"
+     * )
+     * @ORM\JoinTable(name="hevinci_task_exercise")
+     */
+    private $exercises;
+
+    public function __construct()
+    {
+        $this->exercises = new ArrayCollection();
+    }
 
     /**
      * @return integer
@@ -155,6 +170,13 @@ class Task
     public function getWeight()
     {
         return $this->weight;
+    }
+
+    public function addExercise(Exercise $exercise)
+    {
+        if (!$this->exercises->contains($exercise)) {
+            $this->exercises->add($exercise);
+        }
     }
 
     private function computeWeight()
