@@ -27,6 +27,7 @@ class Exercise
      *     targetEntity="HeVinci\PalefBundle\Entity\Task",
      *     inversedBy="exercises"
      * )
+     * @ORM\JoinTable(name="hevinci_task_exercise")
      */
     private $tasks;
 
@@ -37,6 +38,11 @@ class Exercise
      * )
      */
     private $answers;
+
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * @return string

@@ -1,0 +1,20 @@
+<h3>{{ exercise.getDescription() }}</h3>
+
+<h4>Tâches associées</h4>
+<ul>
+    {% for task in exercise.getTasks() %}
+        <li>{{ task.getDescription() }}</li>
+    {% endfor %}
+</ul>
+
+<form action="{{ path('hevinci_submit_exercise', {'id': exercise.getId()}) }}" method="post">
+    <label>
+        <input type="radio" name="answer" value="1" checked />
+        Réponse correcte
+    </label>
+    <label>
+        <input type="radio" name="answer" value="0" />
+        Réponse incorrecte
+    </label>
+    <input type="submit" value="Répondre"/>
+</form>

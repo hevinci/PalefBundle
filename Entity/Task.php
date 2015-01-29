@@ -64,7 +64,7 @@ class Task
     /**
      * @ORM\ManyToMany(
      *     targetEntity="HeVinci\PalefBundle\Entity\Exercise",
-     *     inversedBy="tasks"
+     *     mappedBy="tasks"
      * )
      * @ORM\JoinTable(name="hevinci_task_exercise")
      */
